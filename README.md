@@ -11,8 +11,8 @@ patch branch it carries upstream. `IMAGE_NAME=mineru` is set as a repo variable,
 **`docker-stacks` pulls this; it does not build it.** The compose sets
 `image: ghcr.io/intarweb/mineru:latest` with no `build:`.
 
-**One thing `:latest` does not mean here.** The Dockerfile is `pip install -U "mineru[api]"`, and a
-greenfield build's fingerprint is this repo's own commit sha — so the image is rebuilt when *this*
-repo is pushed or when a `REBUILD_EPOCH` org-variable bump forces it, never on the clock.
-`:latest` therefore reads as "the last greenfield build", **not** "the current upstream MinerU
-release". A stale MinerU means nobody has pushed here in a while; bump `REBUILD_EPOCH` to refresh it.
+**The version is pinned on purpose.** `mineru[api]==X.Y.Z` matches what the `lan-docker/mineru`
+stack actually runs. It was `-U` for one build and that pulled a major version whose CLI had
+renamed `--allow-public-http-client`, which crash-looped the stack on first use — a delivery change
+turned into a silent service upgrade. To move versions: edit the pin, push, and update the compose
+if the CLI changed. `:latest` here means "the last build of this repo", never "current upstream".
